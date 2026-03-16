@@ -1,0 +1,23 @@
+# Python cache/artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.venv/
+venv/
+
+# Environment and editor files
+.env
+.env.*
+.vscode/
+
+# Keep dataset/processed folders, ignore all files inside
+/data/datasets/*
+!/data/datasets/.gitkeep
+/data/processed/*
+!/data/processed/.gitkeep
+
+# Optional: ignore legacy dump if recreated
+/ai_module/
