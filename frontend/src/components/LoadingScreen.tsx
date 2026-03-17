@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Shield } from 'lucide-react'
+import { LogoMark } from '@/components/LogoMark'
 
 const BOOT_MESSAGES = [
   'INITIALIZING AEGIS CORE MODULES...',
@@ -82,7 +82,7 @@ export function LoadingScreen({ onDone }: LoadingScreenProps) {
       {/* Logo */}
       <div className="relative flex flex-col items-center gap-5 animate-slide-up">
         <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 ring-1 ring-primary/40">
-          <Shield className="h-8 w-8 text-primary" />
+          <LogoMark className="h-8 w-8 drop-shadow-[0_0_12px_hsl(var(--primary)/0.5)]" />
           <div className="absolute inset-0 rounded-2xl ring-2 ring-primary/20 animate-ping" style={{ animationDuration: '2s' }} />
         </div>
         <div className="text-center">

@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useContain, useGraph } from '@/hooks/useApi'
-import { ShieldAlert, Loader2, CheckCircle, Zap } from 'lucide-react'
+import { Loader2, CheckCircle, Zap } from 'lucide-react'
 import type { ContainmentResult } from '@/types'
+import { LogoMark } from '@/components/LogoMark'
 
 export function ContainmentPanel() {
   const { data: graph } = useGraph()
@@ -20,7 +21,7 @@ export function ContainmentPanel() {
   return (
     <div className="card-glass rounded-2xl p-5">
       <div className="mb-4 flex items-center gap-2 border-b border-border pb-3">
-        <ShieldAlert className="h-4 w-4 text-threat" />
+        <LogoMark className="h-4 w-4" />
         <span className="font-mono text-xs font-semibold uppercase tracking-wider text-foreground">
           Containment Control
         </span>

@@ -1,13 +1,15 @@
 import { useRef, useState, useCallback, type ReactNode, type RefObject } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  Shield, Search, Network, BarChart3, AlertTriangle, ScrollText,
+  Search, Network, BarChart3, AlertTriangle, ScrollText,
   ArrowRight, Zap, Globe, Lock, TrendingUp,
 } from 'lucide-react'
 import { useTypewriter } from '@/hooks/useTypewriter'
 import { useCountUp } from '@/hooks/useCountUp'
 import { useIntersection } from '@/hooks/useIntersection'
 import { RevealOnScroll } from '@/components/RevealOnScroll'
+import { LogoMark } from '@/components/LogoMark'
+import { PageBackground } from '@/components/PageBackground'
 
 const features = [
   {
@@ -33,10 +35,10 @@ const features = [
 ]
 
 const rawStats = [
-  { label: 'Source Accuracy',  raw: '97.3%', icon: Zap,   delta: '+2.1%' },
-  { label: 'Nodes Monitored',  raw: '50+',   icon: Globe,  delta: 'Active' },
-  { label: 'Threat Models',    raw: '3',     icon: Shield, delta: 'Deployed' },
-  { label: 'Compliance',       raw: '100%',  icon: Lock,   delta: 'Certified' },
+  { label: 'Source Accuracy',  raw: '97.3%', icon: Zap,      delta: '+2.1%' },
+  { label: 'Nodes Monitored',  raw: '50+',   icon: Globe,    delta: 'Active' },
+  { label: 'Threat Models',    raw: '3',     icon: LogoMark, delta: 'Deployed' },
+  { label: 'Compliance',       raw: '100%',  icon: Lock,     delta: 'Certified' },
 ]
 
 const steps = [
@@ -49,7 +51,7 @@ const steps = [
     desc: 'Visualise information spread across the BA network. Identify super-spreader nodes and coordinated bot clusters.',
   },
   {
-    step: '03', icon: Shield, accent: 'text-safe', title: 'Contain & Report',
+    step: '03', icon: LogoMark, accent: 'text-safe', title: 'Contain & Report',
     desc: 'Execute surgical graph-edge removal on threat nodes. Full audit trail generated automatically.',
   },
 ]
@@ -107,7 +109,8 @@ export function HomePage() {
   const { ref: statsRef, isVisible: statsVisible } = useIntersection()
 
   return (
-    <div className="page-content">
+    <PageBackground image="/home.jpg" tone="primary">
+      <div className="page-content">
 
       {/* ── Hero ──────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden">
@@ -320,6 +323,7 @@ export function HomePage() {
           </div>
         </RevealOnScroll>
       </section>
-    </div>
+      </div>
+    </PageBackground>
   )
 }

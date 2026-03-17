@@ -1,5 +1,5 @@
-import { Shield, Github, ExternalLink } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { LogoMark } from '@/components/LogoMark'
 
 export function Footer() {
   return (
@@ -13,7 +13,7 @@ export function Footer() {
           <div className="md:col-span-2">
             <div className="mb-4 flex items-center gap-2.5">
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 ring-1 ring-primary/30">
-                <Shield className="h-4 w-4 text-primary" />
+                <LogoMark className="h-5 w-5" />
               </div>
               <div className="flex flex-col leading-none">
                 <span className="font-mono text-sm font-bold tracking-widest text-foreground">

@@ -1,6 +1,7 @@
-import { Shield, Menu, X, Cpu } from 'lucide-react'
+import { Menu, X, Cpu } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 import { useState, useEffect } from 'react'
+import { LogoMark } from '@/components/LogoMark'
 
 const navItems = [
   { label: 'Home',     path: '/' },
@@ -32,8 +33,8 @@ export function Navbar() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
         {/* Logo */}
         <NavLink to="/" className="glitch-text group flex items-center gap-3">
-          <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 ring-1 ring-primary/30 transition-all group-hover:ring-primary/60 group-hover:shadow-lg group-hover:shadow-primary/20">
-            <Shield className="h-4 w-4 text-primary" />
+          <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 ring-1 ring-primary/30 transition-all duration-300 group-hover:ring-primary/60 group-hover:shadow-lg group-hover:shadow-primary/20">
+            <LogoMark className="h-6 w-6 drop-shadow-[0_0_10px_hsl(var(--primary)/0.35)] transition-transform duration-300 group-hover:scale-110" />
           </div>
           <div className="flex flex-col leading-none">
             <span className="glitch-target font-mono text-[13px] font-bold tracking-widest text-foreground">
