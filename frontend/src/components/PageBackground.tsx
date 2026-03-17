@@ -5,9 +5,10 @@ type PageTone = 'primary' | 'info' | 'safe' | 'threat'
 type PageBackgroundProps = {
   image: string
   tone?: PageTone
-  imageMode?: 'cover' | 'contain'
+  imageMode?: 'cover' | 'contain' | 'hybrid'
   imageFixed?: boolean
   animateImage?: boolean
+  imagePosition?: string
   children: ReactNode
 }
 
@@ -24,6 +25,7 @@ export function PageBackground({
   imageMode = 'cover',
   imageFixed = false,
   animateImage = true,
+  imagePosition = 'center',
   children,
 }: PageBackgroundProps) {
   const imageClasses = [
@@ -33,10 +35,31 @@ export function PageBackground({
     animateImage ? 'animate-bg-drift' : '',
   ].join(' ').trim()
 
+  const hybridFillClasses = [
+    'page-scene-image',
+    'page-scene-image-fill',
+    imageFixed ? 'page-scene-image-fixed' : '',
+    animateImage ? 'animate-bg-drift' : '',
+  ].join(' ').trim()
+
+  const hybridMainClasses = [
+    'page-scene-image',
+    'page-scene-image-contain',
+    'page-scene-image-hybrid-main',
+    imageFixed ? 'page-scene-image-fixed' : '',
+  ].join(' ').trim()
+
   return (
     <div className="page-scene">
       <div className="page-scene-media" aria-hidden>
-        <div className={imageClasses} style={{ backgroundImage: `url(${image})` }} />
+        {imageMode === 'hybrid' ? (
+          <>
+            <div className={hybridFillClasses} style={{ backgroundImage: `url(${image})`, backgroundPosition: imagePosition }} />
+            <div className={hybridMainClasses} style={{ backgroundImage: `url(${image})`, backgroundPosition: imagePosition }} />
+          </>
+        ) : (
+          <div className={imageClasses} style={{ backgroundImage: `url(${image})`, backgroundPosition: imagePosition }} />
+        )}
         <div className={`page-scene-overlay ${toneClass[tone]}`} />
         <div className="page-scene-grid" />
       </div>

@@ -134,12 +134,18 @@ function TiltCard({ children, className }: { children: ReactNode; className?: st
   )
 }
 
-export function HomePage() {
-  const { displayed: typedWord, done: typingDone } = useTypewriter('Misinformation', 72, 650)
-  const { ref: statsRef, isVisible: statsVisible } = useIntersection()
-  const [spotlight, setSpotlight] = useState({ x: 50, y: 34, active: false })
+function SpotlightSurface({
+  children,
+  className = '',
+  glow = 'primary',
+}: {
+  children: ReactNode
+  className?: string
+  glow?: 'primary' | 'info' | 'warning'
+}) {
+  const [spotlight, setSpotlight] = useState({ x: 50, y: 50, active: false })
 
-  const handleHeroMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
+  const handleMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const finePointer = window.matchMedia('(pointer:fine)').matches
     if (!finePointer || window.innerWidth < 1024) return
     const rect = e.currentTarget.getBoundingClientRect()
@@ -148,16 +154,57 @@ export function HomePage() {
     setSpotlight({ x, y, active: true })
   }, [])
 
-  const handleHeroLeave = useCallback(() => {
+  const handleLeave = useCallback(() => {
     setSpotlight((prev) => ({ ...prev, active: false }))
   }, [])
 
+  const backgroundByGlow = {
+    primary: `radial-gradient(300px circle at ${spotlight.x}% ${spotlight.y}%, hsl(var(--primary) / 0.2) 0%, hsl(var(--info) / 0.1) 22%, transparent 62%), radial-gradient(80px circle at ${spotlight.x}% ${spotlight.y}%, hsl(var(--foreground) / 0.08) 0%, transparent 72%)`,
+    info: `radial-gradient(300px circle at ${spotlight.x}% ${spotlight.y}%, hsl(var(--info) / 0.2) 0%, hsl(var(--primary) / 0.09) 22%, transparent 62%), radial-gradient(80px circle at ${spotlight.x}% ${spotlight.y}%, hsl(var(--foreground) / 0.08) 0%, transparent 72%)`,
+    warning: `radial-gradient(300px circle at ${spotlight.x}% ${spotlight.y}%, hsl(var(--warning) / 0.18) 0%, hsl(var(--primary) / 0.08) 22%, transparent 62%), radial-gradient(80px circle at ${spotlight.x}% ${spotlight.y}%, hsl(var(--foreground) / 0.07) 0%, transparent 72%)`,
+  } as const
+
+  const ambientByGlow = {
+    primary: 'radial-gradient(60% 60% at 8% 18%, hsl(var(--primary) / 0.12) 0%, transparent 70%), radial-gradient(48% 42% at 92% 84%, hsl(var(--info) / 0.1) 0%, transparent 74%), linear-gradient(180deg, hsl(var(--card) / 0.3) 0%, hsl(var(--background) / 0.18) 100%)',
+    info: 'radial-gradient(56% 56% at 12% 20%, hsl(var(--info) / 0.13) 0%, transparent 70%), radial-gradient(50% 40% at 92% 82%, hsl(var(--primary) / 0.1) 0%, transparent 74%), linear-gradient(180deg, hsl(var(--card) / 0.28) 0%, hsl(var(--background) / 0.18) 100%)',
+    warning: 'radial-gradient(56% 56% at 10% 16%, hsl(var(--warning) / 0.1) 0%, transparent 68%), radial-gradient(48% 40% at 92% 84%, hsl(var(--primary) / 0.09) 0%, transparent 74%), linear-gradient(180deg, hsl(var(--card) / 0.32) 0%, hsl(var(--background) / 0.2) 100%)',
+  } as const
+
   return (
-    <PageBackground image="/home.jpg" tone="primary" imageMode="contain" imageFixed animateImage={false}>
+    <div
+      className={`relative overflow-hidden ${className}`}
+      onMouseMove={handleMove}
+      onMouseLeave={handleLeave}
+    >
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{ background: ambientByGlow[glow] }}
+      />
+      <div className="pointer-events-none absolute -left-10 top-10 h-32 w-32 rounded-full bg-primary/10 blur-3xl" />
+      <div className="pointer-events-none absolute -right-8 bottom-6 h-36 w-36 rounded-full bg-info/10 blur-3xl" />
+      <div
+        className="pointer-events-none absolute inset-0 hidden lg:block"
+        style={{
+          opacity: spotlight.active ? 0.88 : 0,
+          transition: 'opacity 260ms ease',
+          background: backgroundByGlow[glow],
+        }}
+      />
+      <div className="relative z-10">{children}</div>
+    </div>
+  )
+}
+
+export function HomePage() {
+  const { displayed: typedWord, done: typingDone } = useTypewriter('Misinformation', 72, 650)
+  const { ref: statsRef, isVisible: statsVisible } = useIntersection()
+
+  return (
+    <PageBackground image="/home.jpg" tone="primary" imageMode="hybrid" imageFixed animateImage={false} imagePosition="center top">
       <div className="page-content">
 
       {/* ── Hero ──────────────────────────────────────────────────── */}
-      <section className="section-mask-bottom relative overflow-hidden" onMouseMove={handleHeroMove} onMouseLeave={handleHeroLeave}>
+      <section className="section-mask-bottom relative overflow-hidden">
         {/* Hex grid overlay */}
         <div
           className="absolute inset-0 bg-hex-grid opacity-[0.03]"
@@ -173,14 +220,6 @@ export function HomePage() {
         />
         <div className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 h-[700px] w-[900px] rounded-full bg-primary/12 blur-[140px]" />
         <div className="pointer-events-none absolute -bottom-20 left-1/4 h-[400px] w-[500px] rounded-full bg-info/8 blur-[120px]" />
-        <div
-          className="pointer-events-none absolute inset-0 hidden lg:block"
-          style={{
-            opacity: spotlight.active ? 0.95 : 0,
-            transition: 'opacity 220ms ease',
-            background: `radial-gradient(340px circle at ${spotlight.x}% ${spotlight.y}%, hsl(var(--primary) / 0.2) 0%, hsl(var(--info) / 0.12) 28%, transparent 72%)`,
-          }}
-        />
         {/* Floating accent orbs */}
         <div className="pointer-events-none absolute right-[10%] top-[20%] h-2 w-2 rounded-full bg-primary/40"
           style={{ animation: 'particle-drift 6s ease-in-out infinite' }} />
@@ -256,7 +295,7 @@ export function HomePage() {
       {/* ── Stats ─────────────────────────────────────────────────── */}
       <div
         ref={statsRef as RefObject<HTMLDivElement>}
-        className="section-mask-top section-mask-bottom border-y border-border bg-card/40"
+        className="section-mask-top section-mask-bottom border-y border-border bg-gradient-to-b from-card/60 via-card/36 to-background/20"
       >
         <div className="mx-auto grid max-w-7xl grid-cols-2 md:grid-cols-4">
           {rawStats.map((stat, i) => (
@@ -291,44 +330,46 @@ export function HomePage() {
 
       {/* ── Features ──────────────────────────────────────────────── */}
       <section className="section-mask-top mx-auto max-w-7xl px-6 py-20 md:py-28">
-        <RevealOnScroll className="mb-16 text-center">
-          <p className="mb-3 font-mono text-xs font-semibold uppercase tracking-widest text-primary">Capabilities</p>
-          <h2 className="font-display text-[clamp(1.9rem,3.6vw,2.7rem)] font-bold tracking-[-0.015em] text-foreground">Platform Overview</h2>
-          <p className="mx-auto mt-4 max-w-lg text-sm text-muted-foreground">
-            End-to-end misinformation defense from source tracking through containment.
-          </p>
-        </RevealOnScroll>
+        <SpotlightSurface className="rounded-[2rem] border border-border/70 bg-card/[0.18] shadow-[0_0_0_1px_hsl(var(--primary)/0.06),0_30px_80px_-45px_hsl(var(--primary)/0.45)] px-5 py-8 md:px-7 md:py-10" glow="primary">
+          <RevealOnScroll className="mb-16 text-center">
+            <p className="mb-3 font-mono text-xs font-semibold uppercase tracking-widest text-primary">Capabilities</p>
+            <h2 className="font-display text-[clamp(1.9rem,3.6vw,2.7rem)] font-bold tracking-[-0.015em] text-foreground">Platform Overview</h2>
+            <p className="mx-auto mt-4 max-w-lg text-sm text-muted-foreground">
+              End-to-end misinformation defense from source tracking through containment.
+            </p>
+          </RevealOnScroll>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {features.map((f, i) => (
-            <RevealOnScroll key={f.title} delay={i * 90}>
-              <TiltCard>
-                <Link to={f.link} className="focus-glow interactive-card card-glass-hover group relative block overflow-hidden rounded-2xl p-7">
-                  <span className="pointer-events-none absolute right-5 top-4 font-display text-7xl font-bold text-foreground/[0.03] select-none">
-                    {f.num}
-                  </span>
-                  <div className="relative">
-                    <div className="mb-5 flex items-center gap-3">
-                      <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${f.bg} ring-1 ${f.ring}`}>
-                        <f.icon className={`h-5 w-5 ${f.color}`} />
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {features.map((f, i) => (
+              <RevealOnScroll key={f.title} delay={i * 90}>
+                <TiltCard>
+                  <Link to={f.link} className="focus-glow interactive-card card-glass-hover group relative block overflow-hidden rounded-2xl p-7">
+                    <span className="pointer-events-none absolute right-5 top-4 font-display text-7xl font-bold text-foreground/[0.03] select-none">
+                      {f.num}
+                    </span>
+                    <div className="relative">
+                      <div className="mb-5 flex items-center gap-3">
+                        <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${f.bg} ring-1 ${f.ring}`}>
+                          <f.icon className={`h-5 w-5 ${f.color}`} />
+                        </div>
+                        <h3 className="font-display text-base font-semibold text-foreground">{f.title}</h3>
+                        <ArrowRight className="ml-auto h-4 w-4 text-muted-foreground/40 opacity-0 transition-all group-hover:translate-x-1 group-hover:opacity-100" />
                       </div>
-                      <h3 className="font-display text-base font-semibold text-foreground">{f.title}</h3>
-                      <ArrowRight className="ml-auto h-4 w-4 text-muted-foreground/40 opacity-0 transition-all group-hover:translate-x-1 group-hover:opacity-100" />
+                      <p className="text-sm leading-relaxed text-muted-foreground">{f.description}</p>
                     </div>
-                    <p className="text-sm leading-relaxed text-muted-foreground">{f.description}</p>
-                  </div>
-                </Link>
-              </TiltCard>
-            </RevealOnScroll>
-          ))}
-        </div>
+                  </Link>
+                </TiltCard>
+              </RevealOnScroll>
+            ))}
+          </div>
+        </SpotlightSurface>
       </section>
 
       <div className="section-divider" />
 
       {/* ── Live Operations Strip ─────────────────────────────────── */}
       <section className="section-mask-top section-mask-bottom border-y border-border bg-gradient-to-b from-background/20 to-card/25 px-6 py-18 md:py-22">
-        <div className="mx-auto max-w-7xl">
+        <SpotlightSurface className="mx-auto max-w-7xl rounded-[2rem] border border-border/60 bg-card/[0.12] shadow-[0_30px_80px_-48px_hsl(var(--info)/0.42)] px-4 py-5 md:px-5 md:py-6" glow="info">
           <RevealOnScroll className="mb-10 text-center">
             <p className="mb-3 font-mono text-xs font-semibold uppercase tracking-widest text-info">Realtime Command Surface</p>
             <h2 className="font-display text-[clamp(1.9rem,3.5vw,2.7rem)] font-bold tracking-[-0.015em] text-foreground">Live Operations Pulse</h2>
@@ -363,14 +404,14 @@ export function HomePage() {
               </RevealOnScroll>
             ))}
           </div>
-        </div>
+        </SpotlightSurface>
       </section>
 
       <div className="section-divider" />
 
       {/* ── How It Works ──────────────────────────────────────────── */}
       <section className="section-mask-top section-mask-bottom border-t border-border bg-gradient-to-b from-card/30 to-transparent px-6 py-20 md:py-28">
-        <div className="mx-auto max-w-7xl">
+        <SpotlightSurface className="mx-auto max-w-7xl rounded-[2rem] border border-border/55 bg-card/[0.1] shadow-[0_28px_72px_-50px_hsl(var(--safe)/0.35)] px-5 py-8 md:px-7 md:py-10" glow="primary">
           <RevealOnScroll className="mb-16 text-center">
             <p className="mb-3 font-mono text-xs font-semibold uppercase tracking-widest text-primary">Workflow</p>
             <h2 className="font-display text-[clamp(1.9rem,3.4vw,2.7rem)] font-bold tracking-[-0.015em] text-foreground">How It Works</h2>
@@ -397,7 +438,7 @@ export function HomePage() {
               </RevealOnScroll>
             ))}
           </div>
-        </div>
+        </SpotlightSurface>
       </section>
 
       <div className="section-divider" />
@@ -405,34 +446,36 @@ export function HomePage() {
       {/* ── CTA ───────────────────────────────────────────────────── */}
       <section className="section-mask-top mx-auto max-w-7xl px-6 py-20 md:py-24">
         <RevealOnScroll>
-          <div className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-card via-card to-card/50 p-12 text-center md:p-20">
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/6 via-transparent to-info/4" />
-            <div className="pointer-events-none absolute left-8 top-8 opacity-35">
-              <Sparkles className="h-4 w-4 text-primary" />
-            </div>
-            <div className="pointer-events-none absolute left-1/2 top-0 h-60 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/12 blur-3xl" />
-            <div
-              className="absolute inset-0 bg-hex-grid opacity-[0.025]"
-            />
-            <div className="relative">
-              <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-warning/10 ring-1 ring-warning/30">
-                <AlertTriangle className="h-6 w-6 text-warning" />
+          <SpotlightSurface className="rounded-3xl border border-border bg-gradient-to-br from-card via-card to-card/50 shadow-[0_34px_90px_-54px_hsl(var(--warning)/0.46)]" glow="warning">
+            <div className="relative overflow-hidden p-12 text-center md:p-20">
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/6 via-transparent to-info/4" />
+              <div className="pointer-events-none absolute left-8 top-8 opacity-35">
+                <Sparkles className="h-4 w-4 text-primary" />
               </div>
-              <h2 className="font-display mb-4 text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-                Ready to Defend Against Misinformation?
-              </h2>
-              <p className="mx-auto mb-10 max-w-lg text-sm text-muted-foreground md:text-base">
-                Analyze suspicious content and map propagation networks in real time.
-              </p>
-              <Link
-                to="/detection"
-                className="focus-glow interactive-cta group inline-flex items-center gap-2.5 rounded-xl bg-primary px-9 py-4 font-mono text-sm font-semibold text-primary-foreground shadow-2xl shadow-primary/30 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-primary/50 active:scale-[0.97]"
-              >
-                Launch Platform
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Link>
+              <div className="pointer-events-none absolute left-1/2 top-0 h-60 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/12 blur-3xl" />
+              <div
+                className="absolute inset-0 bg-hex-grid opacity-[0.025]"
+              />
+              <div className="relative">
+                <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-warning/10 ring-1 ring-warning/30">
+                  <AlertTriangle className="h-6 w-6 text-warning" />
+                </div>
+                <h2 className="font-display mb-4 text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+                  Ready to Defend Against Misinformation?
+                </h2>
+                <p className="mx-auto mb-10 max-w-lg text-sm text-muted-foreground md:text-base">
+                  Analyze suspicious content and map propagation networks in real time.
+                </p>
+                <Link
+                  to="/detection"
+                  className="focus-glow interactive-cta group inline-flex items-center gap-2.5 rounded-xl bg-primary px-9 py-4 font-mono text-sm font-semibold text-primary-foreground shadow-2xl shadow-primary/30 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-primary/50 active:scale-[0.97]"
+                >
+                  Launch Platform
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </div>
             </div>
-          </div>
+          </SpotlightSurface>
         </RevealOnScroll>
       </section>
       </div>

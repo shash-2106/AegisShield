@@ -310,7 +310,7 @@ body {
   }
 
   .interactive-card {
-    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease, box-shadow 0.22s ease;
+    transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease, box-shadow 0.24s ease;
   }
 
   .interactive-card:hover {
@@ -320,7 +320,7 @@ body {
   }
 
   .interactive-cta {
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
   }
 
   .interactive-cta:hover {
@@ -399,7 +399,7 @@ body {
 
   /* ── 3D tilt card — JS sets CSS vars ────────────────────────── */
   .tilt-card {
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease;
     will-change: transform;
     transform-style: preserve-3d;
   }
@@ -482,6 +482,41 @@ body {
     background-attachment: fixed;
     animation: none;
     transform: none;
+  }
+
+  .page-scene-image-fill {
+    inset: -2%;
+    opacity: 0.3;
+    filter: blur(16px) saturate(1.08) brightness(0.62);
+    transform: scale(1.08);
+  }
+
+  .page-scene-image-hybrid-main {
+    opacity: 0.52;
+    filter: saturate(1.18) contrast(1.06) drop-shadow(0 0 28px hsl(var(--primary) / 0.14));
+  }
+
+  @media (max-width: 768px) {
+    .tilt-card,
+    .interactive-card,
+    .interactive-cta {
+      transition-duration: 0.16s;
+    }
+
+    .page-scene-image-fixed {
+      background-attachment: scroll;
+    }
+
+    .page-scene-image-hybrid-main {
+      background-size: cover;
+      opacity: 0.4;
+      filter: saturate(1.12) contrast(1.05);
+    }
+
+    .page-scene-image-fill {
+      opacity: 0.36;
+      filter: blur(10px) saturate(1.06) brightness(0.68);
+    }
   }
 
   .page-scene-overlay {
